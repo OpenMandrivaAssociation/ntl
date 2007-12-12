@@ -1,5 +1,5 @@
 %define version	5.3.2
-%define release	1mdk
+%define release	%mkrel 1
 
 %define major	5
 %define libname_orig	lib%{name}
