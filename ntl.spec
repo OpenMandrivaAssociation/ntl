@@ -14,7 +14,6 @@ Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.bz2
 License:	GPL
 Group:		System/Libraries
 BuildRequires:	gmp-devel
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
 NTL is a high-performance, portable C++ library providing data structures and
