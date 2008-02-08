@@ -14,6 +14,7 @@ URL:		http://www.shoup.net/ntl/index.html
 Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.gz
 License:	GPLv2+
 Group:		System/Libraries
+BuildRequires:	gmp-devel
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
