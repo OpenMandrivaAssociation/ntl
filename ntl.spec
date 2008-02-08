@@ -1,19 +1,19 @@
-%define version	5.3.2
+%define version	5.4.1
 %define release	%mkrel 1
 
 %define major	5
-%define libname_orig	lib%{name}
 %define libname	%mklibname %name %{major}
+%define develname %mklibname %name -d
+%define sdevelname %mklibname %name -d -s
 
 Summary:	Library for doing number theory
 Name:		ntl
 Version:	%{version}
 Release:	%{release}
 URL:		http://www.shoup.net/ntl/index.html
-Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.bz2
-License:	GPL
+Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.gz
+License:	GPLv2+
 Group:		System/Libraries
-BuildRequires:	gmp-devel
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
@@ -25,31 +25,30 @@ matrices, and polynomials over the integers and over finite fields.
 Summary:        Main library for NTL (Number Theory Library)
 Group:          System/Libraries
 Provides:	%{name} = %{version}-%{release}
-Provides:	%{libname_orig} = %{version}-%{release}
 
 %description -n %{libname}
 This package contains the libraries needed to run programs dynamically linked
 with NTL (Number Theory Library).
 
-%package -n %{libname}-devel
+%package -n %{develname}
 Group:		Development/C++
 Summary:	Shared libraries and header files for NTL (Number Theory Library)
 Provides:	%{name}-devel = %{version}-%{release}
-Provides:	%{libname_orig}-devel = %{version}-%{release}
 Requires:	%{libname} = %{version}-%{release}
+Obsoletes:	%mklibname -d ntl 5
 
-%description -n %{libname}-devel
+%description -n %{develname}
 This package contains the shared libraries and header files needed for
 developing NTL (Number Theory Library) applications.
 
-%package -n %{libname}-static-devel
+%package -n %{sdevelname}
 Group:		Development/C++
 Summary:	Static libraries for NTL (Number Theory Library)
 Provides:	%{name}-static-devel = %{version}-%{release}
-Provides:	%{libname_orig}-static-devel = %{version}-%{release}
 Requires:	%{libname}-devel = %{version}-%{release}
+Obsoletes:	%mklibname -d -s ntl 5
 
-%description -n %{libname}-static-devel
+%description -n %{sdevelname}
 This package contains the static libraries needed for developing NTL
 (Number Theory Library) applications.
 
@@ -58,10 +57,6 @@ This package contains the static libraries needed for developing NTL
 
 %build
 cd src
-
-# XXX - Settting these seems to cause NTL to miscompile
-#CFLAGS=$RPM_OPT_FLAGS
-#CXXFLAGS=$RPM_OPT_FLAGS
 
 CFLAGS=`echo %optflags | sed 's/-O[0-9]/-O1/'`
 CXXFLAGS=`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'`
@@ -116,16 +111,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 %{_libdir}/*.so.*
 
-%files -n %{libname}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %doc doc/*
 %{_includedir}/*
 %{_libdir}/*.so
 
-%files -n %{libname}-static-devel
+%files -n %{sdevelname}
 %defattr(-,root,root)
 %{_libdir}/*.a
 
 %post -n %{libname} -p /sbin/ldconfig
 %postun -n %{libname} -p /sbin/ldconfig
-
