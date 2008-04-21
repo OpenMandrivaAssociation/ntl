@@ -1,5 +1,5 @@
 %define version	5.4.1
-%define release	%mkrel 1
+%define release	%mkrel 2
 
 %define major	5
 %define libname	%mklibname %name %{major}
@@ -46,7 +46,7 @@ developing NTL (Number Theory Library) applications.
 Group:		Development/C++
 Summary:	Static libraries for NTL (Number Theory Library)
 Provides:	%{name}-static-devel = %{version}-%{release}
-Requires:	%{libname}-devel = %{version}-%{release}
+Requires:	%{develname} = %{version}-%{release}
 Obsoletes:	%mklibname -d -s ntl 5
 
 %description -n %{sdevelname}
