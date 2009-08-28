@@ -1,4 +1,8 @@
-%define version	5.4.2
+# Correct problem the only way to get sage to not core on some tests is to run:
+#	% LD_PRELOAD=/usr/lib/libntl.so.5.5.2:/usr/lib/libgmp.so.3.5.0 sage
+%define	_disable_ld_as_needed 1
+
+%define version	5.5.2
 %define release	%mkrel 1
 
 %define major	5
