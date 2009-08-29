@@ -1,7 +1,3 @@
-# Correct problem the only way to get sage to not core on some tests is to run:
-#	% LD_PRELOAD=/usr/lib/libntl.so.5.5.2:/usr/lib/libgmp.so.3.5.0 sage
-%define	_disable_ld_as_needed 1
-
 %define version	5.5.2
 %define release	%mkrel 1
 
@@ -85,7 +81,7 @@ make \
 	CXXFLAGS="$CXXFLAGS -fPIC" \
 	AR='bash -e -c '\''out=$$1; lib=$$(basename $$out .a).so.%{major}; \
 	lib=lib$${lib#lib}; set -x; rm -f $$lib; ${CXX} -shared -Wl,-soname,$$lib \
-	-o "$$@"; ln -s $$out $$lib'\' \
+	-o "$$@" -lgmp; ln -s $$out $$lib'\' \
 	RANLIB=: \
 	all check
 
