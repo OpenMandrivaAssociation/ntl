@@ -1,5 +1,5 @@
 %define version	5.5.2
-%define release	%mkrel 1
+%define release	%mkrel 2
 
 %define major	5
 %define libname	%mklibname %name %{major}
@@ -16,6 +16,8 @@ License:	GPLv2+
 Group:		System/Libraries
 BuildRequires:	gmp-devel
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
+
+Patch0:		ntl-5.5.2-sagemath.patch
 
 %description
 NTL is a high-performance, portable C++ library providing data structures and
@@ -55,6 +57,8 @@ This package contains the static libraries needed for developing NTL
 
 %prep
 %setup -q
+
+%patch0	-p1
 
 %build
 cd src
