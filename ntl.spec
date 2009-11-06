@@ -1,5 +1,5 @@
 %define version	5.5.2
-%define release	%mkrel 2
+%define release	%mkrel 3
 
 %define major	5
 %define libname	%mklibname %name %{major}
@@ -16,6 +16,9 @@ License:	GPLv2+
 Group:		System/Libraries
 BuildRequires:	gmp-devel
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
+
+BuildRequires:	gf2x-devel
+BuildRequires:	libgmp-devel
 
 Patch0:		ntl-5.5.2-sagemath.patch
 
@@ -63,8 +66,8 @@ This package contains the static libraries needed for developing NTL
 %build
 cd src
 
-CFLAGS=`echo %optflags | sed 's/-O[0-9]/-O1/'`
-CXXFLAGS=`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'`
+CFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'`"
+CXXFLAGS="`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'`"
 
 ./configure \
 PREFIX=%{_prefix} \
@@ -76,7 +79,8 @@ PREFIX=%{_prefix} \
 	CC="${CC-gcc}" CXX="${CXX-g++}" \
 	CPPFLAGS="$CPPFLAGS" \
 	CFLAGS="$CFLAGS" \
-	CXXFLAGS="$CXXFLAGS"
+	CXXFLAGS="$CXXFLAGS" \
+	NTL_GF2X_LIB=on
 
 LD_LIBRARY_PATH=. \
 make \
