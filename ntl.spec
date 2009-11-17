@@ -1,5 +1,5 @@
 %define version	5.5.2
-%define release	%mkrel 3
+%define release	%mkrel 4
 
 %define major	5
 %define libname	%mklibname %name %{major}
@@ -41,6 +41,7 @@ Group:		Development/C++
 Summary:	Shared libraries and header files for NTL (Number Theory Library)
 Provides:	%{name}-devel = %{version}-%{release}
 Requires:	%{libname} = %{version}-%{release}
+Requires:	gf2x-devel
 Obsoletes:	%mklibname -d ntl 5
 
 %description -n %{develname}
@@ -89,7 +90,7 @@ make \
 	CXXFLAGS="$CXXFLAGS -fPIC" \
 	AR='bash -e -c '\''out=$$1; lib=$$(basename $$out .a).so.%{major}; \
 	lib=lib$${lib#lib}; set -x; rm -f $$lib; ${CXX} -shared -Wl,-soname,$$lib \
-	-o "$$@" -lgmp; ln -s $$out $$lib'\' \
+	-o "$$@" -lgmp -lgf2x; ln -s $$out $$lib'\' \
 	RANLIB=: \
 	all check
 
