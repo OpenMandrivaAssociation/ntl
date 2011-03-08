@@ -1,5 +1,5 @@
 %define version	5.5.2
-%define release	%mkrel 6
+%define release	%mkrel 7
 
 %define major	5
 %define libname	%mklibname %name %{major}
