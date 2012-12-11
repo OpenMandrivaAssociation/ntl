@@ -1,6 +1,3 @@
-%define version	5.5.2
-%define release	%mkrel 7
-
 %define major	5
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
@@ -8,18 +5,14 @@
 
 Summary:	Library for doing number theory
 Name:		ntl
-Version:	%{version}
-Release:	%{release}
-URL:		http://www.shoup.net/ntl/index.html
-Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.gz
+Version:	5.5.2
+Release:	8
 License:	GPLv2+
 Group:		System/Libraries
+URL:		http://www.shoup.net/ntl/index.html
+Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.gz
 BuildRequires:	gmp-devel
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-root
-
 BuildRequires:	gf2x-devel
-BuildRequires:	libgmp-devel
-
 Patch0:		ntl-5.5.2-sagemath.patch
 
 %description
@@ -28,8 +21,8 @@ algorithms for manipulating signed, arbitrary length integers, and for vectors,
 matrices, and polynomials over the integers and over finite fields.
 
 %package -n %{libname}
-Summary:        Main library for NTL (Number Theory Library)
-Group:          System/Libraries
+Summary:	Main library for NTL (Number Theory Library)
+Group:		System/Libraries
 Provides:	%{name} = %{version}-%{release}
 
 %description -n %{libname}
@@ -42,7 +35,6 @@ Summary:	Shared libraries and header files for NTL (Number Theory Library)
 Provides:	%{name}-devel = %{version}-%{release}
 Requires:	%{libname} = %{version}-%{release}
 Requires:	gf2x-devel
-Obsoletes:	%mklibname -d ntl 5
 
 %description -n %{develname}
 This package contains the shared libraries and header files needed for
@@ -53,7 +45,6 @@ Group:		Development/C++
 Summary:	Static libraries for NTL (Number Theory Library)
 Provides:	%{name}-static-devel = %{version}-%{release}
 Requires:	%{develname} = %{version}-%{release}
-Obsoletes:	%mklibname -d -s ntl 5
 
 %description -n %{sdevelname}
 This package contains the static libraries needed for developing NTL
@@ -61,7 +52,6 @@ This package contains the static libraries needed for developing NTL
 
 %prep
 %setup -q
-
 %patch0	-p1
 
 %build
@@ -101,39 +91,24 @@ ln -sf libntl.so.%{version} libntl.so.%{major}
 make clean ntl.a check
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
 cd src
 
-make PREFIX=$RPM_BUILD_ROOT%{_prefix} install
+make PREFIX=%{buildroot}%{_prefix} install
 
-install -m 755 libntl.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libntl.so.%{version}
-ln -sf libntl.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libntl.so.%{major}
-ln -sf libntl.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libntl.so
+install -m 755 libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so.%{version}
+ln -sf libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so.%{major}
+ln -sf libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so
 
-rm -rf $RPM_BUILD_ROOT%{_defaultdocdir}/NTL
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}%{_defaultdocdir}/NTL
 
 %files -n %{libname}
-%defattr(-,root,root)
-%doc README
-%{_libdir}/*.so.*
+%{_libdir}/*.so.%{major}*
 
 %files -n %{develname}
-%defattr(-,root,root)
 %doc doc/*
 %{_includedir}/*
 %{_libdir}/*.so
 
 %files -n %{sdevelname}
-%defattr(-,root,root)
 %{_libdir}/*.a
 
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
