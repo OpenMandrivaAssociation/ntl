@@ -52,7 +52,7 @@ NTL provides high quality implementations of state-of-the-art algorithms for:
 %package -n %{libname}
 Summary:	Main library for NTL (Number Theory Library)
 Group:		System/Libraries
-Provides:	%{name} = %{version}-%{release}
+Provides:	%{name} = %{EVRD}
 
 %description -n %{libname}
 This package contains the libraries needed to run programs dynamically linked
@@ -61,8 +61,8 @@ with NTL (Number Theory Library).
 %package -n %{develname}
 Group:		Development/C++
 Summary:	Shared libraries and header files for NTL (Number Theory Library)
-Provides:	%{name}-devel = %{version}-%{release}
-Requires:	%{libname} = %{version}-%{release}
+Provides:	%{name}-devel = %{EVRD}
+Requires:	%{libname} = %{EVRD}
 Requires:	gf2x-devel
 
 %description -n %{develname}
