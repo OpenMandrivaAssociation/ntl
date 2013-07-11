@@ -1,24 +1,53 @@
-%define major	5
+%define multilib_arches %{ix86} x86_64 ppc ppc64 s390 s390x sparcv9 sparc64
+
+%ifarch x86_64
+%define __isa_bits	64
+%else
+%define __isa_bits	32
+%endif
+
+%define major	2
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
-%define sdevelname %mklibname %name -d -s
 
-Summary:	Library for doing number theory
-Name:		ntl
-Version:	5.5.2
-Release:	8
-License:	GPLv2+
-Group:		System/Libraries
-URL:		http://www.shoup.net/ntl/index.html
-Source0:	http://www.shoup.net/ntl/%{name}-%{version}.tar.gz
-BuildRequires:	gmp-devel
-BuildRequires:	gf2x-devel
-Patch0:		ntl-5.5.2-sagemath.patch
+# Epoch required due to downgrade of major
+Epoch:   1
+Summary: High-performance algorithms for vectors, matrices, and polynomials 
+Name:    ntl 
+Version: 6.0.0
+Release: 1%{?dist}
+
+License: GPLv2+
+URL:     http://shoup.net/ntl/ 
+Group:   System/Libraries
+
+Source0: http://shoup.net/ntl/%{name}-%{version}.tar.gz
+Source1: multilib_template.h
+
+# Apply sagemath patch to let sagemath handle NTL errors.
+Patch0:  %{name}-sagemath.patch
+
+BuildRequires: gf2x-devel
+BuildRequires: gmp-devel
+BuildRequires: libtool
 
 %description
-NTL is a high-performance, portable C++ library providing data structures and
-algorithms for manipulating signed, arbitrary length integers, and for vectors,
-matrices, and polynomials over the integers and over finite fields.
+NTL is a high-performance, portable C++ library providing data structures
+and algorithms for arbitrary length integers; for vectors, matrices, and
+polynomials over the integers and over finite fields; and for arbitrary
+precision floating point arithmetic.
+
+NTL provides high quality implementations of state-of-the-art algorithms for:
+* arbitrary length integer arithmetic and arbitrary precision floating point
+  arithmetic;
+* polynomial arithmetic over the integers and finite fields including basic
+  arithmetic, polynomial factorization, irreducibility testing, computation
+  of minimal polynomials, traces, norms, and more;
+* lattice basis reduction, including very robust and fast implementations of
+  Schnorr-Euchner, block Korkin-Zolotarev reduction, and the new 
+  Schnorr-Horner pruning heuristic for block Korkin-Zolotarev;
+* basic linear algebra over the integers, finite fields, and arbitrary
+  precision floating point numbers. 
 
 %package -n %{libname}
 Summary:	Main library for NTL (Number Theory Library)
@@ -40,66 +69,53 @@ Requires:	gf2x-devel
 This package contains the shared libraries and header files needed for
 developing NTL (Number Theory Library) applications.
 
-%package -n %{sdevelname}
-Group:		Development/C++
-Summary:	Static libraries for NTL (Number Theory Library)
-Provides:	%{name}-static-devel = %{version}-%{release}
-Requires:	%{develname} = %{version}-%{release}
-
-%description -n %{sdevelname}
-This package contains the static libraries needed for developing NTL
-(Number Theory Library) applications.
-
 %prep
 %setup -q
-%patch0	-p1
+%patch0	-p0
 
 %build
-cd src
-
-CFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'`"
-CXXFLAGS="`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'`"
-
+pushd src
 ./configure \
-PREFIX=%{_prefix} \
-	LIBDIR=$(echo %{_libdir} | sed 's,^%{_prefix},$${PREFIX},') \
-	INCLUDEDIR=$(echo %{_includedir} | sed 's,^%{_prefix},$${PREFIX},') \
-	DOCDIR=$(echo %{_docdir} | sed 's,^%{_prefix},$${PREFIX},') \
-	NTL_GMP_LIP=on \
-	NTL_STD_CXX=on \
-	CC="${CC-gcc}" CXX="${CXX-g++}" \
-	CPPFLAGS="$CPPFLAGS" \
-	CFLAGS="$CFLAGS" \
-	CXXFLAGS="$CXXFLAGS" \
-	NTL_GF2X_LIB=on
+  CC="${CC-%{__cc}}" \
+  CXX="${CXX-%{__cxx}}" \
+  CFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'` -fPIC" \
+  CXXFLAGS="`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'` -fPIC" \
+  PREFIX=%{_prefix} \
+  DOCDIR=%{_docdir} \
+  INCLUDEDIR=%{_includedir} \
+  LIBDIR=%{_libdir} \
+  NTL_GMP_LIP=on \
+  NTL_GF2X_LIB=on \
+  SHARED=on
+popd
 
-LD_LIBRARY_PATH=. \
-make \
-	CPPFLAGS="$CPPFLAGS -DPIC" \
-	CFLAGS="$CFLAGS -fPIC" \
-	CXXFLAGS="$CXXFLAGS -fPIC" \
-	AR='bash -e -c '\''out=$$1; lib=$$(basename $$out .a).so.%{major}; \
-	lib=lib$${lib#lib}; set -x; rm -f $$lib; ${CXX} -shared -Wl,-soname,$$lib \
-	-o "$$@" -lgmp -lgf2x; ln -s $$out $$lib'\' \
-	RANLIB=: \
-	all check
-
-rm -f libntl.so.%{major}
-mv -f ntl.a libntl.so.%{version}
-ln -sf libntl.so.%{version} libntl.so.%{major}
-
-make clean ntl.a check
+# not smp-safe
+make -C src V=1
 
 %install
-cd src
+make -C src install \
+  PREFIX=%{buildroot}%{_prefix} \
+  DOCDIR=%{buildroot}%{_docdir} \
+  INCLUDEDIR=%{buildroot}%{_includedir} \
+  LIBDIR=%{buildroot}%{_libdir} 
 
-make PREFIX=%{buildroot}%{_prefix} install
+# Unpackaged files
+rm -rfv %{buildroot}%{_docdir}/NTL
+rm -fv  %{buildroot}%{_libdir}/libntl.la
+rm -fv  %{buildroot}%{_libdir}/libntl.a
 
-install -m 755 libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so.%{version}
-ln -sf libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so.%{major}
-ln -sf libntl.so.%{version} %{buildroot}%{_libdir}/libntl.so
-
-rm -rf %{buildroot}%{_defaultdocdir}/NTL
+%ifarch %{multilib_arches}
+# hack to allow parallel installation of multilib factory-devel
+for header in NTL/config NTL/gmp_aux NTL/mach_desc  ; do
+mv  %{buildroot}%{_includedir}/${header}.h \
+    %{buildroot}%{_includedir}/${header}-%{__isa_bits}.h
+install -p -m644 %{SOURCE1} %{buildroot}%{_includedir}/${header}.h
+sed -i \
+  -e "s|@@INCLUDE@@|${header}|" \
+  -e "s|@@INCLUDE_MACRO@@|$(echo ${header} | tr '/.' '_')|" \
+  %{buildroot}%{_includedir}/${header}.h
+done
+%endif
 
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
@@ -108,7 +124,3 @@ rm -rf %{buildroot}%{_defaultdocdir}/NTL
 %doc doc/*
 %{_includedir}/*
 %{_libdir}/*.so
-
-%files -n %{sdevelname}
-%{_libdir}/*.a
-
