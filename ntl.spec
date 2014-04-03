@@ -6,7 +6,7 @@
 %define __isa_bits	32
 %endif
 
-%define major	2
+%define major	3
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
 
@@ -14,7 +14,7 @@
 Epoch:   1
 Summary: High-performance algorithms for vectors, matrices, and polynomials 
 Name:    ntl 
-Version: 6.0.0
+Version: 6.1.0
 Release: 1%{?dist}
 
 License: GPLv2+
