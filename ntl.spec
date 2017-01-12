@@ -1,4 +1,5 @@
 %define multilib_arches %{ix86} x86_64 ppc ppc64 s390 s390x sparcv9 sparc64
+%define _disable_lto 1
 
 %ifarch x86_64
 %define __isa_bits	64
@@ -6,7 +7,7 @@
 %define __isa_bits	32
 %endif
 
-%define major	3
+%define major	33
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
 
@@ -14,8 +15,8 @@
 Epoch:   1
 Summary: High-performance algorithms for vectors, matrices, and polynomials 
 Name:    ntl 
-Version: 6.1.0
-Release: 1%{?dist}
+Version: 10.3.0
+Release: 1
 
 License: GPLv2+
 URL:     http://shoup.net/ntl/ 
@@ -23,9 +24,6 @@ Group:   System/Libraries
 
 Source0: http://shoup.net/ntl/%{name}-%{version}.tar.gz
 Source1: multilib_template.h
-
-# Apply sagemath patch to let sagemath handle NTL errors.
-Patch0:  %{name}-sagemath.patch
 
 BuildRequires: gf2x-devel
 BuildRequires: gmp-devel
@@ -71,21 +69,21 @@ developing NTL (Number Theory Library) applications.
 
 %prep
 %setup -q
-%patch0	-p0
 
 %build
+export CC=gcc
+export CXX=g++
 pushd src
 ./configure \
-  CC="${CC-%{__cc}}" \
-  CXX="${CXX-%{__cxx}}" \
-  CFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'` -fPIC" \
-  CXXFLAGS="`echo %optflags "-fno-rtti" | sed 's/-O[0-9]/-O1/'` -fPIC" \
+  CXX="${CXX-g++}" \
+  CXXFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'` -fPIC" \
   PREFIX=%{_prefix} \
   DOCDIR=%{_docdir} \
   INCLUDEDIR=%{_includedir} \
   LIBDIR=%{_libdir} \
-  NTL_GMP_LIP=on \
+  NATIVE=off \
   NTL_GF2X_LIB=on \
+  NTL_DISABLE_TLS_HACK=on \
   SHARED=on
 popd
 
