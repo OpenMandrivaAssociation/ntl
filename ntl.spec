@@ -83,7 +83,6 @@ pushd src
   LIBDIR=%{_libdir} \
   NATIVE=off \
   NTL_GF2X_LIB=on \
-  NTL_DISABLE_TLS_HACK=on \
   SHARED=on
 popd
 
