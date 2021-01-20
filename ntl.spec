@@ -7,7 +7,7 @@
 %define __isa_bits	32
 %endif
 
-%define major	33
+%define major	43
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
 
@@ -15,7 +15,7 @@
 Epoch:   1
 Summary: High-performance algorithms for vectors, matrices, and polynomials 
 Name:    ntl 
-Version: 10.3.0
+Version: 11.4.3
 Release: 1
 
 License: GPLv2+
@@ -71,11 +71,10 @@ developing NTL (Number Theory Library) applications.
 %setup -q
 
 %build
-export CC=gcc
-export CXX=g++
+#export CC=gcc
+#export CXX=g++
 pushd src
 ./configure \
-  CXX="${CXX-g++}" \
   CXXFLAGS="`echo %optflags | sed 's/-O[0-9]/-O1/'` -fPIC" \
   PREFIX=%{_prefix} \
   DOCDIR=%{_docdir} \
@@ -83,7 +82,6 @@ pushd src
   LIBDIR=%{_libdir} \
   NATIVE=off \
   NTL_GF2X_LIB=on \
-  NTL_DISABLE_TLS_HACK=on \
   SHARED=on
 popd
 
