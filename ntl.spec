@@ -7,7 +7,7 @@
 %define __isa_bits	32
 %endif
 
-%define major	43
+%define major	44
 %define libname	%mklibname %name %{major}
 %define develname %mklibname %name -d
 
