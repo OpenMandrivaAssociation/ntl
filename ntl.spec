@@ -19,7 +19,7 @@ Version: 11.5.1
 Release: 1
 
 License: GPLv2+
-URL:     http://shoup.net/ntl/ 
+URL:     https://shoup.net/ntl/ 
 Group:   System/Libraries
 
 Source0: http://shoup.net/ntl/%{name}-%{version}.tar.gz
