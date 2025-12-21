@@ -25,6 +25,11 @@ Group:   System/Libraries
 Source0: http://shoup.net/ntl/%{name}-%{version}.tar.gz
 Source1: multilib_template.h
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires: gf2x-devel
 BuildRequires: gmp-devel
 BuildRequires: libtool
