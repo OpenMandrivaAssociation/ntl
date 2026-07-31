@@ -15,7 +15,7 @@
 Epoch:   1
 Summary: High-performance algorithms for vectors, matrices, and polynomials 
 Name:    ntl 
-Version: 11.5.1
+Version: 11.6.0
 Release: 1
 
 License: GPLv2+
